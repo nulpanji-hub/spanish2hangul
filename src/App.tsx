@@ -56,8 +56,14 @@ export default function App() {
   // Check if API key is needed (for Shared App environment)
   React.useEffect(() => {
     const checkKey = async () => {
-      // Safely check for API key in environment
-      const hasEnvKey = (typeof process !== 'undefined' && (process.env?.API_KEY || process.env?.GEMINI_API_KEY));
+      // Safely check for API key in environment (Vite standard + Process fallback)
+      const hasEnvKey = !!(
+        // @ts-ignore
+        import.meta.env?.VITE_GEMINI_API_KEY || 
+        // @ts-ignore
+        import.meta.env?.VITE_API_KEY ||
+        (typeof process !== 'undefined' && (process.env?.API_KEY || process.env?.GEMINI_API_KEY || process.env?.VITE_GEMINI_API_KEY))
+      );
       
       if (hasEnvKey) {
         setNeedsKey(false);
@@ -105,7 +111,13 @@ export default function App() {
     setError(null);
     try {
       // Final check for API key before calling service
-      const hasEnvKey = (typeof process !== 'undefined' && (process.env?.API_KEY || process.env?.GEMINI_API_KEY));
+      const hasEnvKey = !!(
+        // @ts-ignore
+        import.meta.env?.VITE_GEMINI_API_KEY || 
+        // @ts-ignore
+        import.meta.env?.VITE_API_KEY ||
+        (typeof process !== 'undefined' && (process.env?.API_KEY || process.env?.GEMINI_API_KEY || process.env?.VITE_GEMINI_API_KEY))
+      );
       
       if (!hasEnvKey) {
         if (window.aistudio && typeof window.aistudio.hasSelectedApiKey === 'function') {
